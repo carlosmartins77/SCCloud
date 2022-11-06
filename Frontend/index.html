@@ -1,0 +1,58 @@
+<html>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<head>
+
+</head>
+
+<body>
+    <form id="subscribeForm">
+        <div>
+            <label><b>Username</b></label>
+            <input id="Username" type="text" placeholder="Username">
+
+            <label><b>Password</b></label>
+            <input id="password" type="password" placeholder="Password">
+            <div class="g-recaptcha" data-sitekey="6LeC2eMiAAAAAHbce-HWkX0t0v8eySALAAdclgL8"> </div>
+            <button type="submit">Login</button>
+        </div>
+
+
+        <div>
+            <a href="#">Forgot password?</a>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('subscribeForm').addEventListener('submit', e => {
+            e.preventDefault();
+
+            const username = document.querySelector('#username').value;
+            const password = document.querySelector('#password').value;
+            const recaptcha = document.querySelector('#g-recaptcha-response').value;
+            console.log(recaptcha)
+
+            return fetch('http://localhost:7070/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "username": username,
+                        "password": password,
+                        "recaptcha": recaptcha
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    alert(data.msg);
+                    if (data.success) return location.reload();
+                });
+        });
+    </script>
+
+</body>
+
+</html>
