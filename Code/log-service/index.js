@@ -5,11 +5,16 @@ const jwt = require("jsonwebtoken");
 const password = process.env.PASSWORD
 const connectDB = require("./moongoDB");
 const cors = require('cors');
+
+const { rabbitmq } = require("./rabbit");
+
 //const swaggerUi = require('swagger-ui-express')
 //const configswagger = require('./swaggerconfig')
 
 // Connect to Data Base
 connectDB();
+// Read list of Queued 
+rabbitmq();
 
 app.use(express.json());
 

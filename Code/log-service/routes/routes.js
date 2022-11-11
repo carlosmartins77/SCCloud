@@ -9,6 +9,7 @@ app.use(express.json());
 // Auth Routes
 router.route("/createLog").post(login);
 
+
 // Other Routes
 
 module.exports = router

@@ -45,14 +45,16 @@ const verificartoken = async (req, res, next) => {
 const login2 = async (req, res) => {
     try {
         // Find User
-        const users = await User.find( { email : req.body.username} );
+        //const users = await User.find( { email : req.body.username} );
+        const users = await User.findOne(req.body.username).lean();
+
         // Login with Valid Credential
-        if (users[0]) {
+        if (!users) {
             // Check Password
             const descrpPassword = await bcrypt.compare(req.body.password, users[0].password);
             if (descrpPassword) {
                 // Generate token
-                const accessToken = generateAcessToken(req.body.username)
+                const accessToken = generateAcessToken(users)
                 res.status(200).json({ token: accessToken })
             }else res.status(404).send({ message : "Invalid Credential" })
         }else res.status(404).send({ message : "Invalid Credential" })
@@ -89,7 +91,11 @@ const login2 = async (req, res) => {
 
 // Generate acess token
 function generateAcessToken(user) {
-   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    try {
+        return jwt.sign({id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 3600})
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 // Register Endpoint
@@ -114,8 +120,28 @@ const registeruser = async (request, response) => {
             response.status(200).json({ message : "User Created" })
         }
     } catch (Error) {
+        if(Error.code === 11000) response.status(404).send() // Meter deste genero os codigos
         response.status(404).send()
     }
+}
+
+
+const changePassword = async (request, response) => {
+    const { token, password: newpwd} = request.body
+    try {
+        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const _id = user.id
+        const hashedpass = newpwd
+        await User.updateOne(
+            {_id}, 
+            {
+                $set: {"password": hashedpass}
+            }
+        )
+    } catch (error) {
+        
+    }
+
 }
 
 // Exports functions
@@ -123,7 +149,8 @@ module.exports = {
     postUser: postUser,
     verificartoken: verificartoken,
     login: login,
-    registeruser: registeruser
+    registeruser: registeruser,
+    changePassword: changePassword
 }
 
 /*
