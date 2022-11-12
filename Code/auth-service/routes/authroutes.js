@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const router = express.Router();
-const { postUser, login, registeruser } = require('../controller/authcontroller')
-const { sendMail, changePassword} = require('../controller/mail')
+const { postUser, login, registeruser, changePassword } = require('../controller/authcontroller')
+const { sendMail} = require('../controller/mail')
 
 const { protect } = require("../middlewares/authmiddlewares")
 
@@ -16,9 +16,9 @@ router.route("/auth/login").post(login);
 //router.route("protect/logout").post(logout);
 router.route("/auth/register").post(registeruser);
 
-router.route("/sendMail").post(sendMail);
-
-router.route("/changePassword").post(changePassword);
+router.use("/protect", protect) 
+router.route("/protect/sendMail").post(sendMail);
+router.route("/protect/changePassword").post(changePassword);
 
 // Other Routes
 

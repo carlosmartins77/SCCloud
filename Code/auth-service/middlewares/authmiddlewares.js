@@ -1,6 +1,7 @@
-const { response } = require("express")
+const { response, request } = require("express")
+const { decode } = require("jsonwebtoken")
 const jwt = require("jsonwebtoken")
-const User = require("../User")
+const LOGIN = require("../model/userModelLogin")
 
 
 const protect = async (req, res, next) => {
@@ -11,15 +12,15 @@ const protect = async (req, res, next) => {
             token = req.headers.authorization.split(" ")[1]
 
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-
             // Find User
-            const find_user = await User.find({ email : decoded})
-
             // Access to Endpoint
-            if (find_user[0]) {
+            const {id, username} = decoded
+            req.user = { id: id, username : username,password : req.body.password};
+            if (decoded) {
                 next()
-            } 
-            res.status(404).send({ message : "  Error: erro to access the Endpoint" })
+            } else {
+                res.status(404).send({ message : "  Error: erro to access the Endpoint" }) 
+            }
         } catch (error) {
             console.log(error)
             res.status(401).json({ message: "User not authorized" })

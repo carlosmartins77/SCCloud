@@ -13,14 +13,17 @@ const cors = require('cors');
 connectDB();
 
 app.use(express.json());
-
 app.use(cors());
+
+
 app.use("/", require("./routes/authroutes"))
 //app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(configswagger))
 
 app.listen(PORT, () => {
     console.log(`Auth-Service at ${PORT}`);
 });
+
+
 
 //app.use("/", require("./routes/authroutes"))
 /*

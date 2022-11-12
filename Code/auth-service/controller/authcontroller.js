@@ -1,4 +1,6 @@
 const User = require("../User");
+const lOGIN = require("../model/userModelLogin");
+const REGISTER = require("../model/userModelRegister");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -42,16 +44,16 @@ const verificartoken = async (req, res, next) => {
 }
 
 // Login Endpoint
-const login2 = async (req, res) => {
+const login = async (req, res) => {
     try {
+        const { password, username } = req.body;
         // Find User
         //const users = await User.find( { email : req.body.username} );
-        const users = await User.findOne(req.body.username).lean();
-
+        const users = await REGISTER.findOne({ username }).lean();
         // Login with Valid Credential
-        if (!users) {
+        if (users) {
             // Check Password
-            const descrpPassword = await bcrypt.compare(req.body.password, users[0].password);
+            const descrpPassword = await bcrypt.compare(password, users.password);
             if (descrpPassword) {
                 // Generate token
                 const accessToken = generateAcessToken(users)
@@ -65,7 +67,7 @@ const login2 = async (req, res) => {
 
 
 // Carlos para o RECAPTCHA
- const login = async (req, res) => {
+ const login2 = async (req, res) => {
     try {
         // Find User
         const users = await User.find( { username : req.body.username} );
@@ -90,9 +92,9 @@ const login2 = async (req, res) => {
 }
 
 // Generate acess token
-function generateAcessToken(user) {
+function generateAcessToken(users) {
     try {
-        return jwt.sign({id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 3600})
+        return jwt.sign({id: users._id, username: users.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 3600})
     } catch (error) {
         console.log(error)
     }
@@ -100,46 +102,40 @@ function generateAcessToken(user) {
 
 // Register Endpoint
 const registeruser = async (request, response) => {
+    const { name, email, password, username } = request.body;
+    // Login with Valid Credential
+    // Encrypt the Password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    console.log("Hash --------------------");
+    console.log("Salt: " + request.body.password);
+    console.log("Password: " + hashedPassword);
     try {
-        const { name, email, password, username } = request.body;
-        // Find User
-        const find_user_username = await User.find({ email : email });
-        const find_user_email = await User.find({ username : username });
-        if (find_user_email[0] || find_user_username[0]) {
-            response.status(404).json({ message : "Already have this username or email" })
-        
-        }else {
-            // Encrypt the Password
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(request.body.password, salt);
-            console.log("Hash --------------------");
-            console.log("Salt: " + salt);
-            console.log("Password: " + hashedPassword);
-            const create_user = await User.create({ name:name, username: username, password: hashedPassword, email:email });
-            console.log(create_user);
-            response.status(200).json({ message : "User Created" })
-        }
+        const create_user = await REGISTER.create({ name, username, password: hashedPassword, email });
+        console.log(create_user);
+        response.status(200).json({ message : "User Created" })
     } catch (Error) {
-        if(Error.code === 11000) response.status(404).send() // Meter deste genero os codigos
-        response.status(404).send()
+        console.log(Error) // Com base no codigo de erro retornar algo 
+        if(Error.code === 11000) response.status(404).send("Already exist this user") // Meter deste genero os codigos
+        else { response.status(404).send(Error) }
     }
 }
 
 
-const changePassword = async (request, response) => {
-    const { token, password: newpwd} = request.body
-    try {
-        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        const _id = user.id
-        const hashedpass = newpwd
-        await User.updateOne(
-            {_id}, 
+const changePassword = async (req, response) => {
+    try{   
+        const { id, username, password} =  req.user
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await REGISTER.updateOne(
+            {id}, 
             {
-                $set: {"password": hashedpass}
+                $set:{"password":hashedPassword}
             }
         )
+        response.status(200).json({ message : "Password Updated!" })
     } catch (error) {
-        
+        // Codigo expirou
     }
 
 }
