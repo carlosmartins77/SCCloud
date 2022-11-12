@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema(
     username: {
       type: String,
       require: true,
+      index: true,
       unique: true
     },
     password: {
@@ -18,12 +19,18 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       require: true,
+      index: true,
       unique: true
-    },
+    }
+    //,
+    //roles: {
+    //  type: Array,
+    //  require: true
+   // }
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Register", userSchema);
+module.exports = mongoose.model("User", userSchema);

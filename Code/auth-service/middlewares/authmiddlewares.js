@@ -1,7 +1,4 @@
-const { response, request } = require("express")
-const { decode } = require("jsonwebtoken")
 const jwt = require("jsonwebtoken")
-const LOGIN = require("../model/userModelLogin")
 
 
 const protect = async (req, res, next) => {
@@ -22,7 +19,6 @@ const protect = async (req, res, next) => {
                 res.status(404).send({ message : "  Error: erro to access the Endpoint" }) 
             }
         } catch (error) {
-            console.log(error)
             res.status(401).json({ message: "User not authorized" })
             return
         }

@@ -1,6 +1,4 @@
-const User = require("../User");
-const lOGIN = require("../model/userModelLogin");
-const REGISTER = require("../model/userModelRegister");
+const USER = require("../model/userModelUser");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -49,7 +47,7 @@ const login = async (req, res) => {
         const { password, username } = req.body;
         // Find User
         //const users = await User.find( { email : req.body.username} );
-        const users = await REGISTER.findOne({ username }).lean();
+        const users = await USER.findOne({ username }).lean();
         // Login with Valid Credential
         if (users) {
             // Check Password
@@ -70,7 +68,7 @@ const login = async (req, res) => {
  const login2 = async (req, res) => {
     try {
         // Find User
-        const users = await User.find( { username : req.body.username} );
+        const users = await USER.find( { username : req.body.username} );
        
         // Login with Valid Credential
         if (users[0]) {
@@ -111,7 +109,7 @@ const registeruser = async (request, response) => {
     console.log("Salt: " + request.body.password);
     console.log("Password: " + hashedPassword);
     try {
-        const create_user = await REGISTER.create({ name, username, password: hashedPassword, email });
+        const create_user = await USER.create({ name, username, password: hashedPassword, email });
         console.log(create_user);
         response.status(200).json({ message : "User Created" })
     } catch (Error) {
@@ -127,7 +125,7 @@ const changePassword = async (req, response) => {
         const { id, username, password} =  req.user
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        await REGISTER.updateOne(
+        await USER.updateOne(
             {id}, 
             {
                 $set:{"password":hashedPassword}

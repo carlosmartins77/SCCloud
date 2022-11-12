@@ -1,15 +1,14 @@
 const { response } = require('express');
 var nodemailer = require('nodemailer');
-const User = require("../User");
+const USER = require("../model/userModelUser");
 const bcrypt = require("bcrypt");
 
 const sendMail = async (req, res) =>{
     const {email, subject, username} = req.body
-    const user_name = await User.find({username: username});
+    const user_name = await USER.findOne({username}).lean();
 
-    if (user_name[0]) {
+    if (user_name) {
         // Desencrypted password
-        const descrpPassword = await bcrypt.compare(req.body.password, users[0].password)
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -20,9 +19,9 @@ const sendMail = async (req, res) =>{
 
         var mailOptions = {
             from: 'sccloud.18845.18836',
-            to: user_name[0].email,
-            subject: 'Sending Email using Node.js',
-            html: `<h3>${descrpPassword}</h3>` // Um Html bonito para isto!
+            to: user_name.email,
+            subject: subject,
+            html: `<h3>Change Password</h3>` // Um Html bonito para isto!
         };
 
         transporter.sendMail(mailOptions, function(error, info){
@@ -46,7 +45,7 @@ const changePassword = async () =>{
                 if (token == process.env.ACCESS_TOKEN_SECRET) {
                     const {password, email} = req.body
                     // Find User
-                    const users = await User.find( { email : email} );
+                    const users = await USER.find( { email : email} );
                     // Login with Valid Credential
                     if (users[0]) {
                         const salt = await bcrypt.genSalt();
