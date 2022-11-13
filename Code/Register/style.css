@@ -29,10 +29,6 @@ body * {
 }
 
 
-.left-login > h1 {
-    color: #77ffc0;
-}
-
 .right-login{
     width: 50vw;
     height: 100vh;
@@ -102,8 +98,17 @@ body * {
 }
 
 .login-image {
-    width: 35vw;
+    width: 40vw;
 }
+
+.registo {
+    font-size: 10px;
+}
+
+.registo > a {
+    color: #00ff88;
+}
+
 
 @media only screen and (max-width: 950px) {
     .card-login{
