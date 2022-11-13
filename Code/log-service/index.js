@@ -6,7 +6,7 @@ const password = process.env.PASSWORD
 const connectDB = require("./moongoDB");
 const cors = require('cors');
 
-const { rabbitmq } = require("./rabbit");
+//const { rabbitmq } = require("./rabbit");
 
 //const swaggerUi = require('swagger-ui-express')
 //const configswagger = require('./swaggerconfig')
@@ -14,13 +14,13 @@ const { rabbitmq } = require("./rabbit");
 // Connect to Data Base
 connectDB();
 // Read list of Queued 
-rabbitmq();
+//rabbitmq();
 
 app.use(express.json());
 
 app.use(cors());
 app.use("/", require("./routes/routes"))
-//app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(configswagger))
+    //app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(configswagger))
 
 app.listen(PORT, () => {
     console.log(`Auth-Service at ${PORT}`);
@@ -35,4 +35,3 @@ const consumer = async () => {
   }
   
   consumer();*/
-  

@@ -1,17 +1,14 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema(
-  {
+const logSchema = mongoose.Schema({
     username_id: {
-      type: String,
+        type: String,
     },
     log_code_id: {
-      type: String
-    },
-  },
-  {
+        type: String
+    }
+}, {
     timestamps: true,
-  }
-);
+});
 
-module.exports = mongoose.model("Logs", userSchema); // users
+module.exports = mongoose.model("Logs", logSchema); // users
