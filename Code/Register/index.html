@@ -1,43 +1,44 @@
 <IDOCTYPE htel>
-<html lang="en">
-<head>
-    <meta charset="UTF=8">
-    <meta http-equiv="X=UA=Compatible"content="IE=edge">
-    <meta name="viewport"content="widthedevice=width,initial=scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-    <title>Login</title>
-</head>
-<body>
-    <div class="main-login">
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF=8">
+        <meta http-equiv="X=UA=Compatible" content="IE=edge">
+        <meta name="viewport" content="widthedevice=width,initial=scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
+        <title>Login</title>
+    </head>
+
+    <body>
+        <div class="main-login">
             <div class="left-login">
-            <img src="./soccer.svg" class = "login-image" alt="soccer">
-        </div>
-        <div class="right-login">
-            <div class="card-login">
-                <h1> Registo </h1>
-                <div class="textfield">
-                    <label for="nome">Nome</label>
-                    <input id="nome" type="text" name="nome" placeholder="nome">
+                <img src="./soccer.svg" class="login-image" alt="soccer">
+            </div>
+            <div class="right-login">
+                <div class="card-login">
+                    <h1> Registo </h1>
+                    <div class="textfield">
+                        <label for="nome">Nome</label>
+                        <input id="nome" type="text" name="nome" placeholder="nome">
+                    </div>
+                    <div class="textfield">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" placeholder="email">
+                    </div>
+                    <div class="textfield">
+                        <label for="usuario">Username</label>
+                        <input id="username" type="text" name="usuario" placeholder="username">
+                    </div>
+                    <div class="textfield">
+                        <label for="senha">Password</label>
+                        <input id="password" type="password" name="senha" placeholder="password">
+                    </div>
+                    <button class="btn-login" onclick="register()"> Efetuar Registo </button>
+                    <h3 class="registo"> Já Possui uma conta? <a href="../Login/index.html"> Efetuar Login</a></h3>
                 </div>
-                <div class="textfield">
-                    <label for="email">Email</label>
-                    <input id="email" type="email" name="email" placeholder="email">
-                </div>
-                <div class="textfield">
-                    <label for="usuario">Username</label>
-                    <input id="username" type="text" name="usuario" placeholder="username">
-                </div>
-                <div class="textfield">
-                    <label for="senha">Password</label>
-                    <input id="password" type="password" name="senha" placeholder="password">
-                </div>
-                <button class="btn-login" onclick="register()"> Efetuar Registo </button>
-                <h3 class="registo"> Já Possui uma conta? <a href="https://www.w3schools.com/"> Efetuar Login</a></h3>
             </div>
         </div>
-    </div>
-</body>
-</html>
+    </body>
 
-
+    </html>
