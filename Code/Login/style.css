@@ -20,7 +20,7 @@ body * {
 .main-register {
     width: 100vw;
     height: 100vh;
-    background-image: url(./Images/Login-bg.jpg);
+    background-color: #4d5d72;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -139,5 +139,4 @@ body * {
     .login-image {
         width: 50vw;
     }
-    .card-login {}
 }

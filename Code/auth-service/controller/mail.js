@@ -21,7 +21,34 @@ const sendMail = async (req, res) =>{
             from: 'sccloud.18845.18836',
             to: user_name.email,
             subject: subject,
-            html: `<h3>Change Password</h3>` // Um Html bonito para isto!
+            html: `<IDOCTYPE htel>
+            <html lang="en">
+            <head>
+                <meta charset="UTF=8">
+                <meta http-equiv="X=UA=Compatible" content="IE=edge">
+                <meta name="viewport" content="widthedevice=width,initial=scale=1.0">
+            </head>
+            <style> 
+                .btn-login {
+                    width: 225px;
+                    padding: 16px 0px;
+                    margin: 25px;
+                    border: none;
+                    border-radius: 8px;
+                    outline: none;
+                    text-transform: uppercase;
+                    font-weight: 800;
+                    letter-spacing: 3px;
+                    color: #4d5d72;
+                    background: #dfdfe0;
+                    cursor: pointer;
+                    box-shadow: 0px 10px 40px -12px #dfdfe0;
+                }
+            </style>
+            <body>
+                <a href = "http://localhost:7070/htmlfile" > <button class="btn-login"> Change Password </button> </a>
+            </body>
+            </html>`
         };
 
         transporter.sendMail(mailOptions, function(error, info){
