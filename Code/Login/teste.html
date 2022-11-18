@@ -1,66 +1,4 @@
-const express = require('express')
-const app = express()
-const router = express.Router();
-const { postUser, login, registeruser, changePassword } = require('../controller/authcontroller')
-const { sendMail} = require('../controller/mail')
-const fetch = require('node-fetch');
-const { stringify } = require('querystring');
-const path = require('path');
-
-const { protect } = require("../middlewares/authmiddlewares");
-const { dirname } = require('path');
-
-app.use('/', router);
-app.use(express.json());
-
-//router.use("/", getUsers)
-
-// Auth Routes
-router.route("/auth/login").post(login);
-//router.route("protect/logout").post(logout);
-router.route("/auth/register").post(registeruser);
-
-router.use("/protect", protect) 
-router.route("/protect/sendMail").post(sendMail);
-router.route("/protect/changePassword").post(changePassword);
-
-
-
-router.route('/loginfile').get((req,res) =>{
-    res.sendFile(__dirname + '/index.html');
-});
-
-router.route('/subscribe').post( async (req,res)=>{
-
-    if (!req.body.captcha)
-    return res.json({ success: false, msg: 'Please select captcha' });
-
-  // Secret key
-  const secretKey = '6LeC2eMiAAAAAEG40JGFTzzSTUifL9F6o8qGo0i7';
-
-  // Verify URL
-  const query = stringify({
-    secret: secretKey,
-    response: req.body.captcha,
-    remoteip: req.connection.remoteAddress
-  });
-  const verifyURL = `https://google.com/recaptcha/api/siteverify?${query}`;
-
-  // Make a request to verifyURL
-  const body = await fetch(verifyURL).then(res => res.json());
-
-  // If not successful
-  if (body.success !== undefined && !body.success)
-    return res.json({ success: false, msg: 'Failed captcha verification' });
-
-  // If successful
-  return res.json({ success: true, msg: 'Captcha passed' });
-});
-
-
-//
-router.route("/htmlfile").get((req, res) => {
-res.send(`<IDOCTYPE htel>
+<IDOCTYPE htel>
     <html <IDOCTYPE htel>
     <html lang="en">
 
@@ -252,7 +190,7 @@ body * {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer localStorage.getItem("token")' 
+            'Authorization': 'Bearer localStorage.getItem('token')' 
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
         }).then((response) => response.json())
@@ -265,9 +203,4 @@ body * {
 
     console.log(localStorage.getItem('token'))
     </script>
-    </html>`)
-});
-
-// Other Routes
-
-module.exports = router
+    </html>

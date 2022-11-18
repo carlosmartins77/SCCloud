@@ -24,9 +24,10 @@ const login = async(req, res) => {
 }
 
 const login2 = async(req, res) => {
-    const { username_id } = req.body;
+    const { username, log_id} = req.body;
+    console.log(username)
     try {
-        const generate_log = await Log.create({ username_id, log_code_id: "1" });
+        const generate_log = await Log.create({ username, log_code_id: log_id });
         console.log(generate_log)
         res.status(200).json({ message: "Log generated" })
     } catch (Error) {

@@ -2,25 +2,9 @@ const USER = require("../model/userModelUser");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const bcrypt = require("bcrypt");
-
-// EXAMPLES
-const postUser = async (req, res, next) =>{
-    const users = await User.find();
-    res.json(users);
-};
-
-// EXAMPLES
-const postUser2 = async (req, res, next) =>{
-  const { name, email, password } = req.body;
-  console.log(name)
-  if (name || email || password) {
-    const users = await User.create({name:name, email:email, password:password});
-    res
-      .status(400)
-      .json({ message: "Please make sure you've added all the fields" });
-    return;
-  }
-};
+const { stringify } = require('querystring');
+const fetch = require('node-fetch');
+const axios = require('axios');
 
 const verificartoken = async (req, res, next) => {
     let token
@@ -44,6 +28,28 @@ const verificartoken = async (req, res, next) => {
 // Login Endpoint
 const login = async (req, res) => {
     try {
+        if (!req.body.captcha)
+            return res.json({ success: false, msg: 'Please select captcha' });
+
+        // Secret key
+        const secretKey = '6LeC2eMiAAAAAEG40JGFTzzSTUifL9F6o8qGo0i7';
+
+        // Verify URL
+        const query = stringify({
+            secret: secretKey,
+            response: req.body.captcha,
+            remoteip: req.connection.remoteAddress
+        });
+        const verifyURL = `https://google.com/recaptcha/api/siteverify?${query}`;
+
+        // Make a request to verifyURL
+        const body = await fetch(verifyURL).then(res => res.json());
+
+        // If not successful
+        if (body.success !== undefined && !body.success)
+            return res.json({ success: false, msg: 'Failed captcha verification' });
+
+        // If successful
         const { password, username } = req.body;
         // Find User
         //const users = await User.find( { email : req.body.username} );
@@ -55,6 +61,15 @@ const login = async (req, res) => {
             if (descrpPassword) {
                 // Generate token
                 const accessToken = generateAcessToken(users)
+                
+                axios.post('http://localhost:7060/createLog', {
+                    username: username,
+                    log_id: 1
+                })
+                .then((response) => {
+                    console.log(response.status);
+                });
+
                 res.status(200).json({ token: accessToken })
             }else res.status(404).send({ message : "Invalid Credential" })
         }else res.status(404).send({ message : "Invalid Credential" })
@@ -63,31 +78,6 @@ const login = async (req, res) => {
     }
 }
 
-
-// Carlos para o RECAPTCHA
- const login2 = async (req, res) => {
-    try {
-        // Find User
-        const users = await USER.find( { username : req.body.username} );
-       
-        // Login with Valid Credential
-        if (users[0]) {
-            // Check Password
-            const descrpPassword = await bcrypt.compare(req.body.password, users[0].password);
-            
-            if (descrpPassword) {
-                // Generate token
-                const accessToken = generateAcessToken(req.body.username)
-                if(recaptcha(req) == true){
-                    res.status(200).json({ token: accessToken })
-                }
-                else res.status(404).send({ message : "Invalid reCaptcha"})
-            }else res.status(404).send({ message : "Invalid Credential" })
-        }else res.status(404).send({ message : "Invalid Credential" })
-    } catch (error) {
-        res.status(404).send({ message : "Error: " + error.message })
-    }
-}
 
 // Generate acess token
 function generateAcessToken(users) {
@@ -111,6 +101,13 @@ const registeruser = async (request, response) => {
     try {
         const create_user = await USER.create({ name, username, password: hashedPassword, email });
         console.log(create_user);
+        axios.post('http://localhost:7060/createLog', {
+                    username: username,
+                    log_id: 2
+                })
+                .then((response) => {
+                    console.log(response.status);
+                });
         response.status(200).json({ message : "User Created" })
     } catch (Error) {
         console.log(Error) // Com base no codigo de erro retornar algo 
@@ -131,16 +128,21 @@ const changePassword = async (req, response) => {
                 $set:{"password":hashedPassword}
             }
         )
+        axios.post('http://localhost:7060/createLog', {
+                    username: username,
+                    log_id: 3
+                })
+                .then((response) => {
+                    console.log(response.status);
+                });
         response.status(200).json({ message : "Password Updated!" })
     } catch (error) {
         // Codigo expirou
     }
-
 }
 
 // Exports functions
 module.exports = {
-    postUser: postUser,
     verificartoken: verificartoken,
     login: login,
     registeruser: registeruser,

@@ -1,37 +1,67 @@
 <IDOCTYPE htel>
     <html lang="en">
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <head>
         <meta charset="UTF=8">
         <meta http-equiv="X=UA=Compatible" content="IE=edge">
         <meta name="viewport" content="widthedevice=width,initial=scale=1.0">
         <link rel="stylesheet" href="style.css">
         <script src="../Register/script.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=<SITEKEY>"></script>
         <title>Login</title>
     </head>
 
     <body>
-        <div class="main-register">
-            <div class="left-login">
-                <img src="./Images/1x/Asset 4.png" style="width: 35%; border-radius:10px">
-                <img src="./Images/Team-Lineup.svg" class="login-image" alt="soccer">
-            </div>
-            <div class="right-login">
-                <div class="card-login">
-                    <h1> LOGIN </h1>
-                    <div class="textfield">
-                        <label for="usuario">Usuário</label>
-                        <input type="text" name="usuario" id="username" placeholder="Usuário">
+        <form id="subscribeForm">
+            <div class="main-register">
+                <div class="left-login">
+                    <img src="./Images/1x/Asset 4.png" style="width: 35%; border-radius:10px">
+                    <img src="./Images/Team-Lineup.svg" class="login-image" alt="soccer">
+                </div>
+                <div class="right-login">
+                    <div class="card-login">
+                        <h1> LOGIN </h1>
+                        <div class="textfield">
+                            <label for="usuario">Usuário</label>
+                            <input type="text" name="usuario" id="username" placeholder="Usuário">
+                        </div>
+                        <div class="textfield">
+                            <label for="senha">Senha</label>
+                            <input type="password" name="senha" id="password" placeholder="Senha">
+                        </div>
+                        <div id = "g-recaptcha-response" class="g-recaptcha" data-sitekey="6LeC2eMiAAAAAHbce-HWkX0t0v8eySALAAdclgL8"> </div>
+                        <button type = "submit" class="btn-login" onclick="login()"> Login </button>
+                        <h3 class="registo"> Não posui uma conta? <a href="../Register/index.html"> Efetuar registo</a></h3>
                     </div>
-                    <div class="textfield">
-                        <label for="senha">Senha</label>
-                        <input type="password" name="senha" id="password" placeholder="Senha">
-                    </div>
-                    <button class="btn-login" onclick="login()"> Login </button>
-                    <h3 class="registo"> Não posui uma conta? <a href="../Register/index.html"> Efetuar registo</a></h3>
                 </div>
             </div>
-        </div>
+        </form>
     </body>
 
+    <script>
+        document.getElementById('subscribeForm').addEventListener('submit',onSubmit);
+        
+        function onSubmit(e){
+            e.preventDefault();
+            
+            grecaptcha.execute('<SITEKEY>', {action: 'homepage'}).then(function(token) {
+    
+            // This data is not being used in the back end (Only the token), but have it here for you to experiment
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const captcha = token;
+    
+                fetch('/auth/login',{
+                method: 'POST',
+                headers:{
+                        'Content-Type': 'application/json'
+                    
+                },
+                body:JSON.stringify({username:username,password:password,captcha:captcha})
+                }).then(res => res.json()).then(data => { alert("msg: " + data.msg + ", success?: " + data.success + ", score: " + data.score)})     
+    
+            });
+            
+        }
+    </script>
     </html>

@@ -6,6 +6,7 @@ const password = process.env.PASSWORD
 const connectDB = require("./moongoDB");
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const secretKey = '<SECRETKEY>';
 //const swaggerUi = require('swagger-ui-express')
 //const configswagger = require('./swaggerconfig')
 
