@@ -30,6 +30,10 @@ router.route('/loginfile').get((req,res) =>{
     res.sendFile(__dirname + '/index.html');
 });
 
+router.route('/resisterfile').get((req,res) =>{
+    res.sendFile(__dirname + '/register.html');
+});
+
 router.route('/subscribe').post( async (req,res)=>{
 
     if (!req.body.captcha)
