@@ -1,0 +1,27 @@
+--- Create Container
+docker build -t authservice:v1 .
+docker build -t logservice:v1 .
+
+--- Run the container
+docker run  --name authservice -d -p 7070:7070 authservice:v1
+docker run  --name logservice -d -p 7060:7060 logservice:v1
+
+-- Add Network
+-- Criar se n existir
+docker network create myNetwork
+-- Adicionar 
+docker network connect myNetwork authservice
+docker network connect myNetwork logservice
+
+
+---- Isto é para o repositorio
+
+-- Tag for docker Hub
+docker tag name repositorio:versao
+docker push repositorio:versao
+--
+docker tag authservice:v1 jrazevedo/authservice:authservice_v1
+docker tag logservice:v1 jrazevedo/logservice:logservice_v1
+--
+docker push jrazevedo/logservice:logservice_v1
+docker push jrazevedo/authservice:authservice_v1 
